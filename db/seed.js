@@ -1,4 +1,3 @@
-// db/seed.js
 const request = require('superagent')
 const user = require('./fixtures/user.json')
 const batches = require('./fixtures/batches.json')
