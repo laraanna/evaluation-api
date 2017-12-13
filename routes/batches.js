@@ -9,7 +9,7 @@ router.get('/batches', (req, res, next) => {
     .sort({ createdAt: -1 })
     .then((batches) => res.json(batches))
     .catch((error) => next(error))
-    
+
   })
   .get('/batches/:id', (req, res, next) => {
     const id = req.params.id
@@ -38,15 +38,26 @@ router.get('/batches', (req, res, next) => {
     })
     .patch('/batches/:id', authenticate, (req, res, next) => {
       const id = req.params.id
-      const patchForBatch = req.body
+      const patchStudent = req.body.student
+
+      console.log('Hi')
+      console.log(patchStudent)
 
       Batch.findById(id)
         .then((batch) => {
           if(!batch) {return next()}
 
-          const updatedBatch = {...batch, ...patchForBatch}
+          const newStudent = batch.students
+            newStudent.push(patchStudent)
 
-          Batch.findByIdAndUpdate(id, { $set: updatedGame }, { new: true })
+          console.log(newStudent)
+
+          const updatedBatch = {
+            ...batch,
+            students: newStudent
+          }
+
+          Batch.findByIdAndUpdate(id, { $set: updatedBatch }, { new: true })
             .then((batch) => res.json(batch))
             .catch((error) => next(error))
         })
