@@ -51,12 +51,46 @@ router.get('/batches', authenticate, (req, res, next) => {
     })
     .put('/batches/:id', authenticate, (req, res, next) => {
       const id = req.params.id
-      const updatedBatch = req.body
+      const getEvaluation = req.body.evaluation
+      const studentId = req.body.studentId
+      const currentStudent = req.body.student
 
-      Batch.findByIdAndUpdate(id, { $set: updatedBatch }, { new: true })
-        .then((batch) => res.json(batch))
-        .catch((error) => next(error))
-    })
+      Batch.findById(id)
+        .then((batch) => {
+          if(!batch) {return next()}
+
+
+        // let thisStudent =  batch.students.filter(function(student) {
+        //     return student.name === currentStudent.name
+        // })
+
+
+        const newStudents =  batch.students.map(student => {
+            if ( student.name === currentStudent.name) {
+              console.log('YEEEEES')
+              student.evaluation.concat(getEvaluation)
+            }
+          return student
+        })
+
+        console.log(newStudents)
+
+        // const newEvaluation = currentStudent.evaluation.concat(getEvaluation)
+        // console.log(newEvaluation)
+
+          const updatedBatch = {
+            ...batch,
+            students: newStudents
+
+          }
+
+          Batch.findByIdAndUpdate(id, { $set: updatedBatch }, { new: true })
+            .then((batch) => res.json(batch))
+            .catch((error) => next(error))
+        })
+      .catch((error) => next(error))
+  })
+
     .patch('/batches/:id', authenticate, (req, res, next) => {
       const id = req.params.id
       const patchStudent = req.body.student
