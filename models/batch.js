@@ -3,9 +3,9 @@ const mongoose = require('../config/database')
 const { Schema } = mongoose
 
 const evaluationSchema = new Schema({
-  color: { type: String, required: true },
+  color: { type: String, required: true, default: "white" },
   date: { type: Date, default: Date.now },
-  remark: { type: String}
+  remark: { type: String, default: ""}
 })
 
 const studentsSchema = new Schema({
@@ -19,6 +19,7 @@ const batchSchema = new Schema({
   startDate: { type: Date },
   endDate: { type: Date },
   students: [studentsSchema],
+  luckyStudent:[String],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 })

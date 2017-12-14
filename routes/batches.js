@@ -1,10 +1,15 @@
 const router = require('express').Router()
 const { Batch } = require('../models')
 const passport = require('../config/auth')
+const main =  require('../lib/main')
 
 const authenticate = passport.authorize('jwt', {session: false})
 
-router.get('/batches', (req, res, next) => {
+
+
+
+
+router.get('/batches', authenticate, (req, res, next) => {
   Batch.find()
     .sort({ createdAt: -1 })
     .then((batches) => res.json(batches))
@@ -17,6 +22,22 @@ router.get('/batches', (req, res, next) => {
       .then((batch) => {
         if (!batch) { return next() }
         res.json(batch)
+      })
+      .catch((error) => next(error))
+  })
+  .get('/batches/:id/ask', (req, res, next) => {
+    const id = req.params.id
+    console.log('hi')
+
+    Batch.findById(id)
+      .then((batch) => {
+        const studentOptions = main.pickStudent(batch.students)
+        console.log(studentOptions)
+        console.log('break')
+        const luckyStar = studentOptions[Math.floor(Math.random()*studentOptions.length)]
+        console.log(luckyStar)
+        if (!batch) { return next() }
+        res.json(luckyStar)
       })
       .catch((error) => next(error))
   })
