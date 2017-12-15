@@ -6,9 +6,6 @@ const main =  require('../lib/main')
 const authenticate = passport.authorize('jwt', {session: false})
 
 
-
-
-
 router.get('/batches', authenticate, (req, res, next) => {
   Batch.find()
     .sort({ createdAt: -1 })
@@ -61,7 +58,6 @@ router.get('/batches', authenticate, (req, res, next) => {
 
         console.log(getEvaluation)
 
-
         const newStudents =  batch.students.map(student => {
             if ( student._id == currentStudent._id) {
               console.log('YEEEEES')
@@ -71,10 +67,6 @@ router.get('/batches', authenticate, (req, res, next) => {
         })
 
         console.log(newStudents)
-        // console.log('break')
-        //
-        // const newEvaluation = currentStudent.evaluation.push(getEvaluation)
-        // console.log(newEvaluation)
 
           const updatedBatch = {
             ...batch,
@@ -125,16 +117,12 @@ router.get('/batches', authenticate, (req, res, next) => {
       Batch.findById(id_batch)
         .then((batch) => {
           if(!batch) {return next()}
-
           // const updatedStudents = batch.students.id(id_student).remove()
-
           const updatedStudents = batch.students.filter(function(student) {
             return student._id != id_student
           });
 
           console.log(updatedStudents)
-
-
           const updatedBatch = {
             ...batch,
             students: updatedStudents
