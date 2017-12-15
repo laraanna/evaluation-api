@@ -59,23 +59,21 @@ router.get('/batches', authenticate, (req, res, next) => {
         .then((batch) => {
           if(!batch) {return next()}
 
-
-        // let thisStudent =  batch.students.filter(function(student) {
-        //     return student.name === currentStudent.name
-        // })
+        console.log(getEvaluation)
 
 
         const newStudents =  batch.students.map(student => {
-            if ( student.name === currentStudent.name) {
+            if ( student._id == currentStudent._id) {
               console.log('YEEEEES')
-              student.evaluation.concat([getEvaluation])
+              student.evaluation.push(getEvaluation)
             }
           return student
         })
 
         console.log(newStudents)
-
-        // const newEvaluation = currentStudent.evaluation.concat(getEvaluation)
+        // console.log('break')
+        //
+        // const newEvaluation = currentStudent.evaluation.push(getEvaluation)
         // console.log(newEvaluation)
 
           const updatedBatch = {
