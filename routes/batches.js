@@ -68,7 +68,7 @@ router.get('/batches', authenticate, (req, res, next) => {
         const newStudents =  batch.students.map(student => {
             if ( student.name === currentStudent.name) {
               console.log('YEEEEES')
-              student.evaluation.concat(getEvaluation)
+              student.evaluation.concat([getEvaluation])
             }
           return student
         })
@@ -118,11 +118,37 @@ router.get('/batches', authenticate, (req, res, next) => {
         })
       .catch((error) => next(error))
   })
-    .delete('/batches/:id', authenticate, (req, res, next) => {
-      const id = req.params.id
-      Batch.remove({_id: req.params.id})
-        .then((batch) => res.json(batch))
-        .catch((error) => next(error))
+    .delete('/batches/:id_batch/:id_student', authenticate, (req, res, next) => {
+      const id_batch = req.params.id_batch
+      const id_student = req.params.id_student
+
+      console.log(id_batch)
+      console.log(id_student)
+      Batch.findById(id_batch)
+        .then((batch) => {
+          if(!batch) {return next()}
+
+          // const updatedStudents = batch.students.id(id_student).remove()
+
+          const updatedStudents = batch.students.filter(function(student) {
+            return student._id != id_student
+          });
+
+          console.log(updatedStudents)
+
+
+          const updatedBatch = {
+            ...batch,
+            students: updatedStudents
+          }
+
+          Batch.findByIdAndUpdate(id_batch, { $set: updatedBatch }, { new: true })
+            .then((batch) => res.json(batch))
+            .catch((error) => next(error))
+
     })
+    .catch((error) => next(error))
+  })
+
 
   module.exports = router
